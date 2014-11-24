@@ -1,6 +1,3 @@
-// Your use of the YouTube API must comply with the Terms of Service:
-// https://developers.google.com/youtube/terms
-
 // Helper function to display JavaScript value on HTML page.
 var results = [];
 var numResults = 0;
@@ -12,9 +9,8 @@ function onClientLoad() {
 
 // Called automatically when YouTube API interface is loaded (see line 9).
 function onYouTubeApiLoad() {
-    // This API key is intended for use only in this lesson.
-    // See http://goo.gl/PdPA1 to get a key for your own applications.
-    gapi.client.setApiKey('AIzaSyCR5In4DZaTP6IEZQ0r1JceuvluJRzQNLE');
+
+    gapi.client.setApiKey('');
 
     firstSearch();
 }
@@ -23,7 +19,7 @@ function firstSearch() {
     // Use the JavaScript client library to create a search.list() API call.
     var request = gapi.client.youtube.search.list({
         part: 'id,snippet',
-        channelId: 'UCFJNcE0iHj7P6dhp5iCZRLg', //API key from codecademy
+        channelId: 'UCFJNcE0iHj7P6dhp5iCZRLg',
         type: 'video'
     });
 
@@ -62,12 +58,25 @@ function showResponse(response) {
 
 function saveResult(response) {
     for (var i = 0, l = response.items.length; i < l; i++) {
+        var stats = getStats(response.items[i].id.videoId);
 
         results.push({
             id: response.items[i].id.videoId,
-            date: response.items[i].snippet.publishedAt,
-
+            date: response.items[i].snippet.publishedAt
         });
+
         document.getElementById('count').innerHTML = numResults;
     }
+}
+
+function getStats(videoID) {
+    var request = gapi.client.youtube.videos.list({
+        id: videoID,
+        part: 'statistics'
+    });
+    // doesn't work yet
+    request.execute(function(response) {
+        stats = response.items.statistics;
+    });
+
 }
